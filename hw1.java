@@ -23,8 +23,6 @@ public class hw1 {
 
             kMatrix = new int [keySize][keySize];
 
-            System.out.println("Key Matrix: \n");
-
             while(in.hasNext()){
                 if(in.hasNextInt()) {
                     if (j >= keySize) {
@@ -73,7 +71,7 @@ public class hw1 {
 
     }
 
-    public static void printTXT(String plainTxt){
+    public static void printTXT(String plainTxt, PrintWriter pen){
         int m =0;
 
         for (int k =0; k < plainTxt.length(); k++) {
@@ -81,20 +79,28 @@ public class hw1 {
             if(m >= 80){
                 m = 0;
                 System.out.println();
+                pen.println();
             }
 
             System.out.print(plainTxt.charAt(k));
+            pen.print(plainTxt.charAt(k));                                                          //FIXME
             m++;
 
         }
     }
 
-    public static void printKey(int [][] keyMatrix){
+    public static void printKey(int [][] keyMatrix, PrintWriter pen){
+
+        System.out.println("Key Matrix: \n");
+        pen.println("Key Matrix:\n");
+
         for(int i = 0; i < keyMatrix.length; i++){
             for(int j = 0; j < keyMatrix.length; j++){
                 System.out.print(keyMatrix[i][j]+ " ");
+                pen.print(keyMatrix[i][j] + " ");                       //FIXME
             }
             System.out.println();
+            pen.println();                                                              //FIXME
         }
     }
 
@@ -159,6 +165,8 @@ public class hw1 {
 
         File in;
         File plain;
+        File output;
+        PrintWriter pen = null;
 
         String plainTxt = "";
         String ciphertxt = "";
@@ -168,10 +176,12 @@ public class hw1 {
 
             in = new File(args[0]);
 
+            output = new File("cipherText.txt");
+            pen = new PrintWriter(output);
 
             int [][] keyMatrix  = readKeyFile(in);
 
-            printKey(keyMatrix);
+            printKey(keyMatrix, pen);
 
             plain = new File(args[1]);
 
@@ -188,17 +198,21 @@ public class hw1 {
            }
 
            System.out.println("\nPlaintext:\n");
-           printTXT(plainTxt);
+           pen.println("\nPlaintext:\n");
+           printTXT(plainTxt, pen);
 
            ciphertxt = hillCipher(plainTxt, keyMatrix);
 
            System.out.println("\n\n\nCiphertext:\n");
-           printTXT(ciphertxt);
+           pen.println("\n\n\nCiphertext:\n");
+           printTXT(ciphertxt, pen);
 
 
         }catch (Exception e) {
             e.printStackTrace();
         }finally{
+            pen.flush();
+            pen.close();
         }
     }
 
